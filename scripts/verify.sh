@@ -191,7 +191,7 @@ echo ""
 
 # --- Check 7: rfkill ---
 echo "--- Check 7: RF kill status ---"
-RFKILL="$(rfkill list 2>/dev/null | grep -A2 -i 'wlan\|wifi' || true)"
+RFKILL="$(rfkill list 2>/dev/null | grep -A3 -Ei 'wlan|wifi|wireless lan' || true)"
 if [[ -n "$RFKILL" ]]; then
     if [[ "$RFKILL" == *"Hard blocked: yes"* ]]; then
         fail "WiFi hard-blocked by rfkill" "hardware"
