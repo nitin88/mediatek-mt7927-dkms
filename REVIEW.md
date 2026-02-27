@@ -10,7 +10,7 @@ Per `agents.md` Agent 5 (Adversarial Reviewer): reduce risk of bricking networki
 - [x] mt76 WiFi source pinned to kernel `v6.19.3`
 - [x] MSI driver ZIPs SHA256-verified (`dd17e8d0...` / `2c4048df...`)
 - [x] Extracted firmware blobs individually SHA256-verified
-- [ ] Legacy PKGBUILD BT path (`dkms-patchmodule.sh`) fetches btusb source from kernel.org for running kernel version. Not used by default WiFi scripts.
+- [ ] BT DKMS pre-build (`dkms-patchmodule.sh`) fetches btusb source from kernel.org for target kernel version.
 
 ### Firmware backup/restore
 
@@ -47,8 +47,8 @@ Per `agents.md` Agent 5 (Adversarial Reviewer): reduce risk of bricking networki
 
 - [x] `install-firmware.sh` uses local ZIP — no network download
 - [x] `install-wifi.sh` uses mt76 pinned snapshot + SHA256 verification, and reuses local cache when available (`.cache/kernel-snapshots/`)
-- [ ] Legacy PKGBUILD BT path still has build-time network dependency (`dkms-patchmodule.sh`)
-- **Risk**: kernel.org availability can still affect WiFi install on first uncached fetch and legacy BT DKMS path.
+- [ ] `install-bt.sh` uses BT DKMS pre-build with build-time network dependency (`dkms-patchmodule.sh`)
+- **Risk**: kernel.org availability can affect WiFi install on first uncached fetch and BT DKMS build flow.
 
 ### Module conflicts
 

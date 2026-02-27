@@ -18,11 +18,17 @@ echo "=== Step 1: Remove WiFi DKMS module ==="
 SKIP_DRACUT=1 "${SCRIPT_DIR}/uninstall-wifi.sh"
 echo ""
 
-echo "=== Step 2: Remove firmware ==="
+if [[ -x "${SCRIPT_DIR}/uninstall-bt.sh" ]]; then
+    echo "=== Step 2: Remove BT DKMS module ==="
+    SKIP_DRACUT=1 "${SCRIPT_DIR}/uninstall-bt.sh"
+    echo ""
+fi
+
+echo "=== Step 3: Remove firmware ==="
 SKIP_DRACUT=1 "${SCRIPT_DIR}/uninstall-firmware.sh"
 echo ""
 
-echo "=== Step 3: Rebuild initramfs once ==="
+echo "=== Step 4: Rebuild initramfs once ==="
 dracut --force
 echo ""
 

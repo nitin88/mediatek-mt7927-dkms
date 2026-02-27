@@ -29,7 +29,9 @@ dnf install -y \
     patch \
     bsdtar \
     python3 \
-    unzip
+    unzip \
+    bluez \
+    usbutils
 
 # Validate kernel-devel matches running kernel
 KDEV="/usr/src/kernels/${KVER}"

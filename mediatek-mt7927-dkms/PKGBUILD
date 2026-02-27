@@ -72,7 +72,7 @@ source=(
   'dkms.conf'
   'dkms-patchmodule.sh'
 )
-sha256sums=('84094b0e92d3e820f932df358cd806f8a537c79c8aacacf9333af4a84a5f6af1'
+sha256sums=('e5aea7a3e4bde89e316a1eac975fbca9db98fe4fa1c979fcee2d262b32be24ad'
             '736d3fcd477e380a1b3e9f2a3d424ec4473535ead44e8c8ac8f515d886b8fdfa'
             '00c3af6c9dec261de352711912b4bfc534b60c1071575c9ead8cb1a061ef7634'
             'e32485fff0e91881eb16f2f00a54990af1d8eac9cbab4b4a3f197fb66139683c'

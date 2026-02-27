@@ -29,7 +29,6 @@ FW_DIR="${REPO_DIR}/firmware"
 ZIP_SHA256="dd17e8d0f17932ee2e83a9c17b45cfa8c7841c5fa0b7c26c63e59629bfdfef2a"
 HASH_MANIFEST="${FW_DIR}/SHA256SUMS"
 BT_BLOB="BT_RAM_CODE_MT6639_2_1_hdr.bin"
-BT_BLOB_SHA256="27c6a38598176e3dde7baa87d0749aec12013db29cbaec97db14079abce5079f"
 
 # WiFi firmware files to install
 WIFI_BLOBS=(
@@ -116,8 +115,13 @@ done
 # Optional informational check: BT blob from the same package.
 BT_BLOB_FILE="${EXTRACT_DIR}/${BT_BLOB}"
 if [[ -f "${BT_BLOB_FILE}" ]]; then
+    BT_EXPECTED_SHA256="$(manifest_sha_for_blob "${BT_BLOB}")"
+    if [[ -z "${BT_EXPECTED_SHA256}" ]]; then
+        echo "  WARNING: No SHA256 entry for ${BT_BLOB} in ${HASH_MANIFEST} (informational)" >&2
+        BT_EXPECTED_SHA256="unknown"
+    fi
     BT_ACTUAL_SHA256="$(sha256sum "${BT_BLOB_FILE}" | awk '{print $1}')"
-    if [[ "${BT_ACTUAL_SHA256}" == "${BT_BLOB_SHA256}" ]]; then
+    if [[ "${BT_EXPECTED_SHA256}" != "unknown" && "${BT_ACTUAL_SHA256}" == "${BT_EXPECTED_SHA256}" ]]; then
         echo "  ${BT_BLOB}: OK (informational)"
     else
         echo "  WARNING: ${BT_BLOB} SHA mismatch (informational; WiFi install continues)" >&2

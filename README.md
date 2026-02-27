@@ -1,4 +1,4 @@
-# MT7927 Wi-Fi Enablement (Linux)
+# MT7927 Wi-Fi/BT Enablement (Linux)
 
 Local, reproducible, rollback-safe tooling for MediaTek MT7927 (Filogic 380) Wi-Fi on Linux.
 
@@ -20,7 +20,7 @@ MT7927 is a combo chip: WiFi via PCIe (mt7925e driver) + Bluetooth via USB (btus
 
 | Distro | Kernel | Wi-Fi | BT | Notes |
 |--------|--------|-------|-----|-------|
-| Fedora 43 | 6.18.x | Target | Deferred | Primary development target |
+| Fedora 43 | 6.18.x | Target | Optional DKMS path | Primary development target |
 
 ## Quickstart
 
@@ -34,11 +34,15 @@ sudo ./scripts/install-firmware.sh
 # 3. Build and install DKMS module
 sudo ./scripts/install-wifi.sh
 
+# Optional: enable Bluetooth (btusb/btmtk DKMS + BT firmware from mediatek_bt.zip)
+sudo ./scripts/install-bt.sh
+
 # 4. Reboot
 sudo reboot
 
 # 5. Verify
 ./scripts/verify.sh
+./scripts/verify-bt.sh
 ```
 
 Installer scripts are **sudo-user only**. Run them with `sudo` from your normal user shell, not from a direct root shell, so cache ownership stays compatible with non-root maintenance workflows.
@@ -70,6 +74,7 @@ sudo reboot
 
 # Or individually:
 sudo ./scripts/uninstall-wifi.sh      # DKMS module only
+sudo ./scripts/uninstall-bt.sh        # BT DKMS + BT firmware restore
 sudo ./scripts/uninstall-firmware.sh   # firmware only (restores backup)
 ```
 
@@ -87,11 +92,14 @@ mt7927/
 │   ├── install-deps.sh          — install build dependencies (dnf)
 │   ├── install-firmware.sh      — extract and install firmware
 │   ├── install-wifi.sh          — build and install DKMS module
+│   ├── install-bt.sh            — build/install BT DKMS (btusb/btmtk) + BT firmware
 │   ├── update-mt76-pin.sh       — opt-in mt76 pin updater (with patch dry-run validation)
 │   ├── uninstall-wifi.sh        — remove DKMS module
+│   ├── uninstall-bt.sh          — remove BT DKMS module + restore BT firmware
 │   ├── uninstall-firmware.sh    — restore firmware from backup
 │   ├── uninstall-all.sh         — full uninstall
 │   ├── verify.sh                — PASS/FAIL diagnostics
+│   ├── verify-bt.sh             — Bluetooth diagnostics
 │   └── experimental/            — boot timing workarounds (disabled)
 └── firmware/
     ├── PROVENANCE.md            — firmware source and hashes
@@ -110,9 +118,11 @@ mt7927/
    - `mt6639-wifi-dma.patch` — DMA ring layout + channel context
    - `mt7925-wifi-connstate.patch` — Connection state fix (EAPOL auth)
 
+4. **Bluetooth path**: `install-bt.sh` installs BT firmware (`/lib/firmware/mediatek/mt6639/BT_RAM_CODE_MT6639_2_1_hdr.bin`) and a separate BT DKMS package (`mediatek-mt7927-bt/1.0`) that patches/builds `btusb` + `btmtk`. BT patch logic is aligned with [NarKarapetyan93/mt7927-bluetooth-linux](https://github.com/NarKarapetyan93/mt7927-bluetooth-linux).
+
 ## Known issues
 
-- **Bluetooth**: Requires separate BT patches (btusb/btmtk) + boot timing workaround for USB enumeration. Deferred.
+- **Bluetooth**: still less battle-tested than WiFi. If controller initialization hangs after failed attempts, do a full power cycle and re-run `./scripts/verify-bt.sh`.
 - **Suspend/resume**: Untested — may require workarounds.
 - **Kernel upgrades**: DKMS auto-rebuilds on kernel update, but major version changes may break patches. Run `verify.sh` after kernel updates.
 - **Secure Boot**: `install-wifi.sh` fails by default when SB is enabled; use `--allow-secure-boot` only if you intentionally handle module signing yourself.
